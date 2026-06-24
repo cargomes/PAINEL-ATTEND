@@ -1,0 +1,1160 @@
+/* ================================================================
+ * ATTEND · Painel Operacional — Folha de estilos
+ * ================================================================
+ *
+ * Layout: kiosk display 1920×1080 (mínimo), dark theme,
+ * grid de 3 linhas (topbar 64px / main / progress strip 40px).
+ *
+ * ÍNDICE
+ * ────────────────────────────────────────────────
+ *  1.  Reset, tokens e base
+ *  2.  Utilitários e animações globais
+ *  3.  Shell (grid principal)
+ *  4.  Topbar (marca, navegação, relógio)
+ *  5.  Progress strip (rodapé com barra)
+ *  6.  Telas (sistema de troca)
+ *  7.  Tela 1  · Painel Operacional
+ *     7.1  Chamada Atual (painel lateral)
+ *     7.2  Lista de ocorrências
+ *  8.  Tela 2  · Fila de Descartes
+ *  9.  Tela 3  · EPI / Segurança
+ * ================================================================ */
+
+/* ================================================================
+ * 1. RESET, TOKENS E BASE
+ * ================================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Fundos escalonados */
+  --bg-0: #05070b;
+  --bg-1: #0c1018;
+  --bg-2: #121720;
+  --bg-3: #181f2c;
+
+  /* Bordas */
+  --border-1: rgba(255, 255, 255, 0.055);
+  --border-2: rgba(255, 255, 255, 0.09);
+  --border-3: rgba(255, 255, 255, 0.16);
+
+  /* Texto */
+  --text-1: #f1f1f1;
+  --text-2: #7d8aaa;
+  --text-3: #404a62;
+
+  /* Cores funcionais */
+  --red: #f04247;
+  --red-soft: rgba(240, 66, 71, 0.13);
+  --amber: #f5a623;
+  --amber-soft: rgba(245, 166, 35, 0.12);
+  --green: #1fd07a;
+  --green-soft: rgba(31, 208, 122, 0.1);
+  --blue: #3d9fff;
+  --blue-soft: rgba(61, 159, 255, 0.11);
+
+  /* Glows */
+  --glow-red: 0 0 14px rgba(240, 66, 71, 0.7), 0 0 36px rgba(240, 66, 71, 0.22);
+  --glow-amber: 0 0 14px rgba(245, 166, 35, 0.7), 0 0 36px rgba(245, 166, 35, 0.22);
+  --glow-green: 0 0 14px rgba(31, 208, 122, 0.7), 0 0 36px rgba(31, 208, 122, 0.22);
+  --glow-blue: 0 0 14px rgba(61, 159, 255, 0.7), 0 0 36px rgba(61, 159, 255, 0.22);
+
+  /* Raios de borda */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  /* Tipografia */
+  --font-sans: 'Outfit', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-0);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ================================================================
+ * 2. UTILITÁRIOS E ANIMAÇÕES GLOBAIS
+ * ================================================================ */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes row-out {
+  to {
+    opacity: 0;
+    transform: translateX(40px);
+    height: 0;
+  }
+}
+
+/* ================================================================
+ * 3. SHELL — Grid principal
+ * ================================================================
+ * topbar 64px | corpo 1fr | rodapé 40px
+ */
+.shell {
+  display: grid;
+  grid-template-rows: 64px 1fr 40px;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ================================================================
+ * 4. TOPBAR
+ * ================================================================ */
+.topbar {
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  background: linear-gradient(180deg, #0e1420 0%, var(--bg-1) 100%);
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Linha inferior azul */
+.topbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(61, 159, 255, 0.35) 25%, rgba(61, 159, 255, 0.65) 50%, rgba(61, 159, 255, 0.35) 75%, transparent 100%);
+  box-shadow: 0 1px 12px rgba(61, 159, 255, 0.18);
+}
+
+/* Marca */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  margin-right: 28px;
+  flex-shrink: 0;
+}
+.brand-logo img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(61, 159, 255, 0.14));
+}
+
+/* Separador vertical */
+.topbar-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border-2);
+  margin: 0 20px;
+  flex-shrink: 0;
+}
+
+/* Dots de navegação — ativo vira pill */
+.screen-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-3);
+  cursor: pointer;
+  transition:
+    width 220ms ease,
+    background 180ms,
+    box-shadow 180ms,
+    border-radius 200ms ease;
+}
+.nav-dot.active {
+  width: 24px;
+  border-radius: 4px;
+  background: var(--blue);
+  box-shadow:
+    0 0 0 3px rgba(61, 159, 255, 0.18),
+    0 0 10px rgba(61, 159, 255, 0.4);
+}
+.nav-dot:hover:not(.active) {
+  background: var(--text-2);
+}
+
+/* Nome da tela atual */
+.screen-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-1);
+  margin-left: 14px;
+  min-width: 200px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* Botão tela cheia */
+.btn-fullscreen {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-2);
+  background: var(--bg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 14px;
+  flex-shrink: 0;
+  transition:
+    background 120ms,
+    border-color 120ms;
+}
+.btn-fullscreen:hover {
+  background: var(--bg-3);
+  border-color: var(--border-3);
+}
+.btn-fullscreen svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--text-2);
+  stroke-width: 1.8;
+  fill: none;
+}
+
+/* Relógio */
+.clock-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 16px;
+  gap: 2px;
+}
+.clock-time {
+  /* font-family: var(--font-mono); */
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  line-height: 1;
+  color: var(--text-1);
+}
+.clock-date {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-1);
+  letter-spacing: 0.5px;
+}
+
+/* ================================================================
+ * 5. PROGRESS STRIP
+ * ================================================================ */
+.progress-strip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  background: var(--bg-1);
+  border-top: 1px solid var(--border-1);
+  flex-shrink: 0;
+}
+.progress-info {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-1);
+  white-space: nowrap;
+  min-width: 200px;
+}
+.progress-track {
+  flex: 1;
+  height: 3px;
+  background: var(--border-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), rgba(61, 159, 255, 0.45));
+  border-radius: 3px;
+  transform-origin: left;
+}
+.progress-countdown {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-1);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ================================================================
+ * 6. TELAS — sistema de troca
+ * ================================================================ */
+.body {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+}
+.screen.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ================================================================
+ * 7. TELA 1 · PAINEL OPERACIONAL
+ * ================================================================ */
+#screen-1 {
+  flex-direction: row !important;
+}
+
+/* ─── 7.1  Chamada Atual ────────────────────────────────────────── */
+
+/*
+ * Cor de severidade (`--sev`) aplicada em 3 lugares:
+ *   status-dot + timer elapsed + faixa de ação (CTA).
+ * O restante do painel é monocromático.
+ */
+.call-panel {
+  --sev: var(--red);
+  --sev-soft: var(--red-soft);
+  --sev-glow: var(--glow-red);
+  --sev-glow-elapsed: 0 0 2px rgba(240, 66, 71, 1), 0 0 10px rgba(240, 66, 71, 0.55), 0 0 32px rgba(240, 66, 71, 0.18);
+
+  width: 29%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-1);
+  border-right: 1px solid var(--border-1);
+  overflow: hidden;
+}
+.call-panel.sev-warn {
+  --sev: var(--amber);
+  --sev-soft: var(--amber-soft);
+  --sev-glow: var(--glow-amber);
+  --sev-glow-elapsed: 0 0 2px rgba(245, 166, 35, 1), 0 0 10px rgba(245, 166, 35, 0.55), 0 0 32px rgba(245, 166, 35, 0.18);
+}
+.call-panel.sev-lab {
+  --sev: var(--blue);
+  --sev-soft: var(--blue-soft);
+  --sev-glow: var(--glow-blue);
+  --sev-glow-elapsed: 0 0 2px rgba(61, 159, 255, 1), 0 0 10px rgba(61, 159, 255, 0.55), 0 0 32px rgba(61, 159, 255, 0.18);
+}
+.call-panel.sev-ok {
+  --sev: var(--green);
+  --sev-soft: var(--green-soft);
+  --sev-glow: var(--glow-green);
+  --sev-glow-elapsed: 0 0 2px rgba(31, 208, 122, 1), 0 0 10px rgba(31, 208, 122, 0.55), 0 0 32px rgba(31, 208, 122, 0.18);
+}
+
+/* Zona 1+2 — label + placa (elemento dominante) */
+.call-identity {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 20px;
+  gap: 4px;
+  border-bottom: 1px solid var(--border-1);
+}
+
+/* Linha: ícone + dot + label colada acima da placa */
+.call-plate-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.call-truck-icon {
+  width: 36px;
+  height: 36px;
+  stroke: var(--text-1);
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.call-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--sev);
+  flex-shrink: 0;
+  animation: call-dot-blink 1.6s ease-in-out infinite;
+}
+@keyframes call-dot-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+.call-status-label {
+  font-size: 28px;
+  text-transform: uppercase;
+  color: var(--sev);
+  text-shadow: var(--sev-glow);
+  white-space: nowrap;
+}
+.call-plate {
+  font-family: var(--font-sans);
+  font-size: 80px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--text-1);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Zona 3 — ocorrência */
+.call-occurrence {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 20px;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-1);
+}
+.call-occurrence-type {
+  font-family: var(--font-sans);
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--text-1);
+  text-transform: uppercase;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* Zona 4 — timer (única zona colorida pela severidade) */
+.call-timer {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-1);
+}
+.call-elapsed {
+  font-family: var(--font-mono);
+  font-size: 80px;
+  font-weight: 700;
+  letter-spacing: -5px;
+  color: var(--sev);
+  text-shadow: none;
+  line-height: 1;
+  white-space: nowrap;
+  /* overflow: hidden; */
+  max-width: 100%;
+}
+
+/* Zona 5 — ação (CTA) */
+.call-action {
+  flex: 0 0 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 0 20px;
+  background: color-mix(in srgb, var(--sev) 10%, transparent);
+  animation: call-action-pulse 2.4s ease-in-out infinite;
+}
+@keyframes call-action-pulse {
+  0%,
+  100% {
+    background: color-mix(in srgb, var(--sev) 10%, transparent);
+  }
+  50% {
+    background: color-mix(in srgb, var(--sev) 20%, transparent);
+  }
+}
+.call-action-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sev);
+  flex-shrink: 0;
+  animation: call-dot-blink 1.2s ease-in-out infinite;
+}
+.call-action-text {
+  font-family: var(--font-sans);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--sev);
+}
+
+/* ─── 7.2  Lista de ocorrências ────────────────────────────────── */
+
+/*
+ * Grade simplificada: borda-sev | placa | tipo+detalhe | tempo+status
+ * Dot e badge-com-borda removidos — a borda esquerda já comunica severidade;
+ * o badge vira texto mono pequeno ao lado do tempo.
+ */
+.cards-col {
+  flex: 1;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border-1);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.occ-card {
+  background: var(--bg-1);
+  display: grid;
+  grid-template-columns: 250px 1fr 150px;
+  /*grid-template-columns: 280px 1fr 210px;*/
+  align-items: center;
+  overflow: hidden;
+  border-left: 15px solid transparent;
+  animation: row-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.occ-card:nth-child(1) {
+  animation-delay: 40ms;
+}
+.occ-card:nth-child(2) {
+  animation-delay: 90ms;
+}
+.occ-card:nth-child(3) {
+  animation-delay: 140ms;
+}
+.occ-card:nth-child(4) {
+  animation-delay: 190ms;
+}
+.occ-card.removing {
+  animation: row-out 380ms cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+/* Severidade: borda esquerda + fundo muito sutil */
+.occ-card.crit {
+  border-left-color: var(--red);
+  animation:
+    row-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both,
+    crit-blink 3s ease-in-out 400ms infinite;
+}
+.occ-card.warn {
+  border-left-color: var(--amber);
+}
+.occ-card.ok {
+  border-left-color: var(--green);
+}
+.occ-card.lab {
+  border-left-color: var(--blue);
+}
+
+@keyframes crit-blink {
+  0%,
+  100% {
+    background: rgba(240, 66, 71, 0.05);
+  }
+  50% {
+    background: rgba(240, 66, 71, 0.02);
+  }
+}
+
+/* Coluna — placa */
+.occ-plate-col {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  height: 100%;
+}
+.occ-plate {
+  /* font-family: var(--font-mono); */
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: var(--text-1);
+  white-space: nowrap;
+  padding: 10px 5px;
+  border: 1px solid var(--border-1);
+}
+/* Coluna — tipo e detalhe */
+.occ-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 0 0 25px;
+  overflow: hidden;
+}
+.occ-type {
+  font-size: 45px;
+  font-weight: 800;
+  color: var(--text-1);
+  line-height: 1.2;
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+}
+.occ-detail {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  color: var(--text-1);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+}
+
+/* Coluna — tempo e badge */
+.occ-time-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 10px;
+  gap: 4px;
+  height: 100%;
+}
+.occ-wait {
+  font-family: var(--font-mono);
+  font-size: 46px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  word-spacing: -0.55em;
+  white-space: nowrap;
+  line-height: 1;
+}
+.occ-wait.r {
+  color: var(--red);
+}
+.occ-wait.a {
+  color: var(--amber);
+}
+.occ-wait.g {
+  color: var(--green);
+}
+.occ-wait.b {
+  color: var(--blue);
+}
+
+/* Badge como texto mono, sem borda/fundo */
+.occ-badge {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.occ-badge.urgente {
+  color: var(--red);
+}
+.occ-badge.atencao {
+  color: var(--amber);
+}
+.occ-badge.normal {
+  color: var(--green);
+}
+.occ-badge.lab {
+  color: var(--blue);
+}
+
+/* Estado vazio */
+.occ-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  gap: 14px;
+  background: var(--bg-1);
+}
+.occ-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  border: 1px solid rgba(31, 208, 122, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.occ-empty-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: var(--green);
+  stroke-width: 2;
+  fill: none;
+}
+.occ-empty-message {
+  font-size: 18px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+/* ================================================================
+ * 8. TELA 2 · FILA DE DESCARTES
+ * ================================================================ */
+#screen-2 {
+  background: var(--bg-0);
+}
+
+.s2-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Lista da fila */
+.s2-queue {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  background: var(--border-1);
+  gap: 1px;
+}
+
+/* Item da fila — grid: pos | placa+carga | info | eta+status */
+.s2-item {
+  flex: 1;
+  background: var(--bg-1);
+  display: grid;
+  grid-template-columns: 90px 280px 1fr 190px;
+  align-items: center;
+  overflow: hidden;
+  min-height: 0;
+  border-left: 4px solid transparent;
+  animation: row-in 320ms both;
+}
+.s2-item.removing {
+  animation: row-out 380ms forwards;
+}
+.s2-item.next {
+  border-left-color: var(--green);
+  background: rgba(31, 208, 122, 0.04);
+  animation:
+    row-in 320ms both,
+    next-pulse 2.5s ease-in-out 500ms infinite;
+}
+.s2-item.blocked {
+  border-left-color: var(--red);
+  background: rgba(240, 66, 71, 0.04);
+}
+@keyframes next-pulse {
+  0%,
+  100% {
+    background: rgba(31, 208, 122, 0.04);
+  }
+  50% {
+    background: rgba(31, 208, 122, 0.09);
+  }
+}
+
+/* Posição */
+.s2-pos {
+  font-family: var(--font-mono);
+  font-size: 42px;
+  font-weight: 600;
+  color: var(--text-1);
+  text-align: center;
+  text-transform: uppercase;
+  padding: 0 12px;
+}
+.s2-item.next .s2-pos {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 42px;
+}
+.s2-item.blocked .s2-pos {
+  color: var(--red);
+}
+
+/* Placa + carga (2 linhas) */
+.s2-plate-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 0;
+  overflow: hidden;
+}
+.s2-plate {
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  line-height: 1;
+  color: var(--text-1);
+}
+.s2-item.next .s2-plate {
+  color: var(--green);
+}
+.s2-item.blocked .s2-plate {
+  color: var(--red);
+}
+.s2-cargo {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  color: var(--text-1);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+}
+.s2-item.next .s2-cargo {
+  color: rgba(31, 208, 122, 0.55);
+}
+
+/* Tipo + empresa (2 linhas) */
+.s2-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 0 0 24px;
+  overflow: hidden;
+}
+.s2-type {
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.s2-item.next .s2-type {
+  color: var(--green);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.s2-item.blocked .s2-type {
+  color: var(--red);
+}
+.s2-company {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  color: var(--text-1);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+}
+.s2-item.next .s2-company {
+  color: rgba(31, 208, 122, 0.55);
+}
+
+/* Título e subtítulo descritivos */
+.s2-title {
+  font-size: 50px;
+  font-weight: 700;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.s2-item.next .s2-title {
+  color: var(--green);
+  font-weight: 800;
+}
+.s2-item.blocked .s2-title {
+  color: var(--red);
+}
+.s2-desc {
+  font-family: var(--font-mono);
+  font-size: 30px;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  /* letter-spacing: 0.3px; */
+  top: -10px;
+  position: relative;
+}
+.s2-item.next .s2-desc {
+  color: rgba(31, 208, 122, 0.6);
+}
+.s2-item.blocked .s2-desc {
+  color: rgba(240, 66, 71, 0.7);
+}
+
+/* ETA + status — coluna combinada */
+.s2-eta-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  gap: 6px;
+  border-left: 1px solid var(--border-1);
+  height: 100%;
+}
+.s2-eta {
+  font-family: var(--font-mono);
+  font-size: 43px;
+  font-weight: 700;
+  color: var(--text-1);
+  white-space: nowrap;
+  word-spacing: -0.55em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.s2-item.next .s2-eta {
+  color: var(--green);
+}
+.s2-item.blocked .s2-eta {
+  color: var(--red);
+}
+
+.s2-status {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+.s2-item.next .s2-status {
+  color: var(--green);
+}
+.s2-item.blocked .s2-status {
+  color: var(--red);
+}
+
+/* ================================================================
+ * 9. TELA 3 · EPI / SEGURANÇA
+ * ================================================================ */
+#screen-3 {
+  background: var(--bg-0);
+  align-items: center;
+  justify-content: center;
+}
+
+.s3-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 100%;
+  padding: 0 64px;
+  text-align: center;
+  width: 84%;
+}
+
+.s3-title {
+  font-size: 100px;
+  font-weight: 900;
+  letter-spacing: -3px;
+  text-transform: uppercase;
+  line-height: 1.05;
+  color: var(--green);
+  text-shadow: var(--glow-green);
+}
+
+.s3-sub {
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--text-1);
+  max-width: 740px;
+  line-height: 1.5;
+}
+
+/* Grade de 4 itens de EPI */
+.s3-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+/* Card de cada item */
+.s3-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border-2);
+  border-top: 3px solid var(--border-2);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  transition:
+    background 200ms,
+    border-color 200ms,
+    transform 200ms,
+    box-shadow 200ms;
+}
+.s3-card.scanning {
+  border-top-color: var(--blue);
+  border-color: rgba(61, 159, 255, 0.4);
+  background: rgba(61, 159, 255, 0.05);
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 3px rgba(61, 159, 255, 0.1),
+    var(--shadow-md);
+}
+.s3-card.acked {
+  border-top-color: var(--green);
+  border-color: rgba(31, 208, 122, 0.35);
+  background: rgba(31, 208, 122, 0.06);
+  box-shadow: 0 0 20px rgba(31, 208, 122, 0.06);
+}
+
+/* Ícone */
+.s3-ico {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.s3-ico svg {
+  width: 96px;
+  height: 96px;
+  stroke: var(--green);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 200ms;
+}
+.s3-card.scanning .s3-ico svg {
+  stroke: var(--blue);
+}
+
+/* Selo de "ok" no ícone */
+.s3-ico .check {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 200ms,
+    transform 200ms;
+  box-shadow: 0 0 12px rgba(31, 208, 122, 0.5);
+}
+.s3-card.acked .s3-ico .check {
+  opacity: 1;
+  transform: scale(1);
+}
+.s3-ico .check svg {
+  width: 20px;
+  height: 20px;
+  stroke: #fff;
+  stroke-width: 3;
+}
+
+/* Nome do item */
+.s3-nm {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-1);
+  transition: color 200ms;
+}
+.s3-card.acked .s3-nm {
+  color: var(--green);
+}
+
+/* Barra de confirmação */
+.s3-ackbar {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  color: var(--green);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 280ms;
+  text-shadow: var(--glow-green);
+}
+.s3-ackbar.show {
+  opacity: 1;
+}
