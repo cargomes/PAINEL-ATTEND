@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Painel Operacional Attend Ambiental — sistema de triagem industrial com rotação automática de 3 telas." />
+    <meta name="theme-color" content="#05070b" />
+
+    <title>Attend · Painel Operacional</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@300;400;500&display=swap" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+
+  <body>
+    <div class="shell" data-display-only="true">
+
+      <!-- TOPBAR -->
+      <header class="topbar" role="banner">
+        <div class="brand-logo">
+          <img src="assets/images/logo_w.png" alt="Attend Ambiental" />
+        </div>
+
+        <div class="topbar-divider" aria-hidden="true"></div>
+
+        <nav class="screen-dots" id="screen-dots" aria-label="Navegação entre telas"></nav>
+        <div class="screen-name" id="screen-name" aria-live="polite">PAINEL OPERACIONAL</div>
+
+        <div class="spacer"></div>
+
+        <div class="clock-widget" aria-label="Relógio">
+          <div class="clock-time" id="clock-time">--:--</div>
+          <div class="clock-date" id="clock-date">---</div>
+        </div>
+
+        <button class="btn-fullscreen" id="fs-btn" type="button" title="Tela cheia" aria-label="Alternar tela cheia">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+          </svg>
+        </button>
+      </header>
+
+      <!-- MAIN -->
+      <main class="body" role="main">
+
+        <!-- TELA 1 — PAINEL OPERACIONAL -->
+        <section id="screen-1" class="screen active" data-screen-label="01 Painel Operacional" aria-labelledby="screen-1-title">
+          <h2 id="screen-1-title" class="visually-hidden">Painel Operacional</h2>
+          <aside class="call-panel" id="call-panel" aria-label="Chamada atual"></aside>
+          <section class="cards-col" id="cards-col" aria-label="Ocorrências ativas"></section>
+        </section>
+
+        <!-- TELA 2 — FILA DE DESCARTES -->
+        <section id="screen-2" class="screen" data-screen-label="02 Fila de Descartes" aria-labelledby="screen-2-title">
+          <h2 id="screen-2-title" class="visually-hidden">Fila de Descartes</h2>
+
+          <div class="s2-wrap">
+            <div class="s2-queue" id="s2-queue" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <!-- TELA 3 — EPI / SEGURANÇA -->
+        <section id="screen-3" class="screen" data-screen-label="03 EPI / Segurança" aria-labelledby="screen-3-title">
+          <h2 id="screen-3-title" class="visually-hidden">EPI e Segurança</h2>
+
+          <div class="s3-wrap">
+            <p class="s3-title">Use Seu EPI</p>
+            <p class="s3-sub">
+              Obrigatório em toda a área operacional,
+              <br />
+              sem exceções.
+            </p>
+            <div class="s3-grid" id="s3-grid" role="group" aria-label="Itens de EPI"></div>
+            <p class="s3-ackbar" id="s3-ackbar">✓ Checklist confirmado — turno autorizado</p>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- PROGRESS STRIP -->
+      <footer class="progress-strip" role="contentinfo">
+        <div class="progress-info" id="progress-info">PAINEL OPERACIONAL</div>
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-countdown" id="progress-countdown" aria-label="Tempo restante na tela">--s</div>
+      </footer>
+
+    </div>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>
